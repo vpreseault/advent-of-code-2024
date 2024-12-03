@@ -14,6 +14,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	part1(data)
+	part2(data)
+}
+
+func part1(data []byte) {
 	lines := strings.Split(string(data), "\n")
 	leftList, rightList := []int{}, []int{}
 	for _, line := range lines {
@@ -28,7 +33,6 @@ func main() {
 
 	leftList = quicksort(leftList)
 	rightList = quicksort(rightList)
-	fmt.Println(rightList)
 
 	totalDistance := 0
 	for i := 0; i < len(leftList); i++ {
@@ -39,7 +43,35 @@ func main() {
 		totalDistance += distance
 	}
 
-	fmt.Println(totalDistance)
+	fmt.Printf("Total distance: %v\n", totalDistance)
+}
+
+func part2(data []byte) {
+	lines := strings.Split(string(data), "\n")
+	leftList, rightList := []int{}, make(map[int]int)
+	for _, line := range lines {
+		distances := strings.Split(line, "   ")
+		if leftDistance, err := strconv.Atoi(distances[0]); err == nil {
+			leftList = append(leftList, leftDistance)
+		}
+
+		if rightDistance, err := strconv.Atoi(distances[1]); err == nil {
+			if val, ok := rightList[rightDistance]; ok {
+				rightList[rightDistance] = val + 1
+			} else {
+				rightList[rightDistance] = 1
+			}
+		}
+	}
+
+	similarity := 0
+	for i := 0; i < len(leftList); i++ {
+		if val, ok := rightList[leftList[i]]; ok {
+			similarity += leftList[i] * val
+		}
+	}
+
+	fmt.Printf("Similarity: %v\n", similarity)
 }
 
 func quicksort(arr []int) []int {
